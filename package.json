@@ -1,0 +1,15 @@
+{
+  "name": "acessocomercial-public",
+  "private": true,
+  "description": "Acesso Comercial — SDK and starter templates for building storefronts",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build:sdk": "npm run build -w packages/storefront-sdk",
+    "build:tools": "npm run build -w packages/storefront-tools"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

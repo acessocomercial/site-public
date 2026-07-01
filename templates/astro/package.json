@@ -1,0 +1,16 @@
+{
+  "name": "storefront-starter-astro",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "getschema": "npx tsx scripts/getSchema.ts",
+    "update": "npm run getschema"
+  },
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@acessocomercial/storefront-sdk": "^0.1.0"
+  }
+}

@@ -1,0 +1,95 @@
+---
+import { storefront } from '../lib/storefront';
+
+const storeInfo = await storefront.store.get();
+const storeName = storeInfo?.name || 'Loja';
+const storeHostname = import.meta.env.PUBLIC_STORE_HOSTNAME || 'demo';
+const apiUrl = import.meta.env.PUBLIC_API_URL || '';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title} — {storeName}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --color-bg: #ffffff; --color-bg-subtle: #f8f9fa; --color-bg-muted: #f1f3f5;
+      --color-border: #e9ecef; --color-border-strong: #dee2e6;
+      --color-text: #212529; --color-text-secondary: #6c757d; --color-text-muted: #adb5bd;
+      --color-accent: #111827; --color-accent-hover: #1f2937; --color-success: #059669;
+      --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 9999px;
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --transition: 0.2s cubic-bezier(0.4,0,0.2,1); --container: 1280px; --header-h: 64px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+    body{font-family:var(--font-family);color:var(--color-text);background:var(--color-bg);line-height:1.6;display:flex;flex-direction:column;min-height:100vh}
+    a{color:inherit;text-decoration:none} img{display:block;max-width:100%}
+
+    .header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-border);height:var(--header-h)}
+    .header-inner{max-width:var(--container);margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:1.25rem;font-weight:800;letter-spacing:-.03em}
+
+    .footer{background:var(--color-text);color:rgba(255,255,255,.7);padding:48px 24px 0;margin-top:auto}
+    .footer-inner{max-width:var(--container);margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;padding-bottom:40px}
+    .footer-brand p{font-size:.85rem;margin-top:8px;line-height:1.6}
+    .footer-logo{font-size:1.15rem;font-weight:800;color:#fff;letter-spacing:-.03em}
+    .footer-links h4{font-size:.8rem;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px}
+    .footer-links a{display:block;font-size:.85rem;color:rgba(255,255,255,.6);margin-bottom:10px;transition:color var(--transition)}
+    .footer-links a:hover{color:#fff}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding:20px 0;text-align:center;font-size:.78rem;color:rgba(255,255,255,.4)}
+
+    @media(max-width:640px){.footer-inner{grid-template-columns:1fr;gap:32px}}
+  </style>
+  <slot name="head" />
+  <script
+    src={`${apiUrl}/api/storefront/tools/loader.js`}
+    data-hostname={storeHostname}
+    async
+  ></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a href="/" class="logo">{storeName}</a>
+    </div>
+  </header>
+
+  <slot />
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-logo">{storeName}</span>
+        <p>Sua loja online com a melhor experiência de compra.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Institucional</h4>
+        <a href="/sobre">Sobre nós</a>
+        <a href="/privacidade">Privacidade</a>
+        <a href="/termos">Termos de Uso</a>
+      </div>
+      <div class="footer-links">
+        <h4>Atendimento</h4>
+        <a href="/contato">Contato</a>
+        <a href="/trocas">Trocas e Devoluções</a>
+        <a href="/faq">FAQ</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,2333 @@
+type Query {
+  auth: Auth
+  client(hostname: String!): Client!
+  shoppingCart(hostname: String!, isCheckout: Boolean, recoverShoppingCartToken: String, recoverOrderToken: String, recoverAdjustmentToken: String): ShoppingCart!
+  order(hostname: String!, id: ID!, email: String): Order
+
+  """Fetch a single product by its global Relay ID."""
+  product(
+    """Global Relay ID of the product."""
+    id: ID!
+  ): Product
+
+  """Fetch multiple products by their global Relay IDs."""
+  products(
+    """Array of global Relay IDs."""
+    ids: [ID!]!
+  ): [Product]!
+  adminPaymentByLinkHash(paymentLinkHash: String): OfficePayment
+}
+
+type Auth {
+  name: String!
+  isLoggedOffice(hostname: String): Boolean
+  isLoggedClient(hostname: String): Boolean
+  hostname: String
+  tutorial: Tutorial
+  officeUserExists(email: String, confirmationToken: String, hostname: String): Boolean!
+}
+
+type Tutorial {
+  """The ID of an object"""
+  id: ID!
+  flows: [TutorialFlow!]!
+}
+
+type TutorialFlow {
+  currentStep: Int!
+  finished: Boolean!
+  title: String!
+  restartCounter: Int!
+}
+
+type Client {
+  cpf(id: String!): CpfLookup!
+  mappedProducts(items: [InvoiceItemMappingInput!]!): [ProductMapping!]!
+  reviewSummary(productId: ID!): ReviewSummary!
+  productsForm: ProductsForm
+  sessionReplays(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, start: String, end: String, visitorId: String, sessionId: ID, userId: ID, shoppingCartId: ID, orderId: ID): SessionReplayConnection!
+  stores: [Store!]!
+  id: ID!
+  domain: Domain!
+  store: Store!
+  sections(categories: [String!], menu: String): Section!
+  categories: [Category!]!
+  adBar: AdBar
+  highlightedProducts(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, category: String, menu: String, isActive: Boolean): ProductConnection!
+  clientProducts(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, section: [String], sort: String, withVariations: Boolean, menu: String, categories: [String], isActive: Boolean): ProductConnection!
+  products(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, section: [String], sort: String, withVariations: Boolean, menu: String, categories: [String], isActive: Boolean, defaultSort: Boolean): ProductConnection!
+  metrics: Metrics!
+  shippingBoxes: [ShippingBox!]!
+  batchRecords(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String): BatchRecordConnection!
+  totalBatchRecords(search: String): Int!
+  skus: [Sku!]!
+  consumers(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String): ConsumerConnection!
+  totalConsumers(search: String): Int!
+  consumer(id: ID): Consumer!
+  employees(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String): EmployeeConnection!
+  totalEmployees(search: String): Int!
+  orders(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, startDate: String, endDate: String, userId: ID): OrderConnection!
+  countOrders(search: String, startDate: String, endDate: String, onlyActive: Boolean, userId: ID): Int!
+  order(id: ID!): Order
+  office: Office!
+  productsOnSale(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, category: String, section: [String], sort: String): ProductConnection!
+  totalProductsOnSale(search: String, category: String, section: [String]): Int!
+  userByEmail(email: String!): UserByEmail!
+  menus: [Menu!]!
+  isAvailableHostname(newHostname: String!): Boolean!
+  clientPaymentGateway: ClientPaymentGateway
+  featuredProducts: [Product!]!
+  homeProductsByCategory(menu: String): [Product!]!
+  funnels: [Funnel!]!
+  autocompleteProducts(query: String!, limit: Int): AutocompleteProductsResponse!
+  publicPaymentGateway: PublicPaymentGateway!
+  indicators: [Indicator!]!
+  timers: [Timer!]!
+  cashDiscounts: [CashDiscount!]!
+  discountModals: [DiscountModal!]!
+  socialProofEvents(productIds: [ID!]!): [SocialProofEvent!]!
+  notificationSummary(isRead: Boolean, type: String, skip: Int, limit: Int, first: Int, after: String): NotificationQuery!
+  privacyPolicy: PrivacyPolicy
+  termsOfUse: TermsOfUse
+  storeLeads(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String): StoreLeadConnection!
+  totalStoreLeads(search: String): Int!
+  storeLead(id: ID): StoreLead!
+  pageElements(pageType: String!): [PageElement!]!
+  elements(type: String!): [Element!]!
+}
+
+type CpfLookup {
+  name: String
+  cpf: String
+}
+
+type ProductMapping {
+  itemIndex: Int!
+  targets: [ProductMappingTarget!]
+}
+
+type ProductMappingTarget {
+  product: Product!
+  quantityFactor: Float!
+}
+
+type Product implements Node {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+  type: String!
+  description: String!
+  images: [Image!]!
+  category: String!
+  price: Float
+  finalPrice: Float
+  cost: Float
+  reviews(skip: Int, count: Int, stars: Int): ReviewConnection!
+  availableQuantity: Int!
+  section: [String!]!
+  videos: [Video!]!
+  shippingInfo: ShippingInfo
+  skuCode: String
+  highlightOrder: Int
+  cEan: String
+  cEanTrib: String
+  brand: String
+  variations: [Product!]!
+  variation: Variation
+  installmentsPrice: [InstallmentsPrice!]!
+  discountPercentage: Float
+  attachments: [Image!]
+  authenticatedAttachments: Boolean!
+  menu: [String!]!
+  groups: [String!]!
+  priority: Int
+  isActive: Boolean!
+  virtualProduct: VirtualProduct
+  isVariation: Boolean!
+  allVariationsAvailableQuantity: Int!
+  cashDiscount: CashDiscount
+  seo: ProductSeo
+  slug: String!
+}
+
+"""An object with an ID"""
+interface Node {
+  """The id of the object."""
+  id: ID!
+}
+
+type Image {
+  url: String!
+  filename: String!
+}
+
+"""A connection to a list of items."""
+type ReviewConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ReviewEdge]
+  total: Int!
+}
+
+"""Information about pagination in a connection."""
+type PageInfo {
+  """When paginating forwards, are there more items?"""
+  hasNextPage: Boolean!
+
+  """When paginating backwards, are there more items?"""
+  hasPreviousPage: Boolean!
+
+  """When paginating backwards, the cursor to continue."""
+  startCursor: String
+
+  """When paginating forwards, the cursor to continue."""
+  endCursor: String
+}
+
+"""An edge in a connection."""
+type ReviewEdge {
+  """The item at the end of the edge"""
+  node: Review
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Review implements Node {
+  id: ID!
+  name: String!
+  productTitle: String!
+  stars: Int!
+  comment: String
+  answer: String
+  createdAt: String!
+  images: [Image!]
+  videos: [Video!]
+}
+
+type Video {
+  url: String!
+  filename: String!
+  thumbnail: String
+  processingTaskId: String
+}
+
+type ShippingInfo {
+  weight: Float!
+  format: String
+  length: Int!
+  height: Int!
+  width: Int!
+  fragile: Boolean!
+  individualPacking: Boolean!
+}
+
+type Variation {
+  attributes: [VariationAttribute!]!
+}
+
+type VariationAttribute {
+  name: String!
+  value: String!
+}
+
+type InstallmentsPrice {
+  installmentsValue: Int!
+  totalAmount: Float!
+  installmentAmount: Float!
+}
+
+type VirtualProduct {
+  link: String
+  file: RawFileReference
+}
+
+type RawFileReference {
+  """The ID of an object"""
+  rawFileId: ID!
+  filename: String!
+  url(hostname: String!): String!
+}
+
+type CashDiscount {
+  """The ID of an object"""
+  id: ID!
+  specificProducts: [Product!]!
+  discountPercentage: Float!
+}
+
+type ProductSeo {
+  metaTitle: String
+  metaDescription: String
+  keywords: String
+}
+
+input InvoiceItemMappingInput {
+  skuCode: String
+  title: String
+}
+
+type ReviewSummary {
+  total: Int!
+  average: Float!
+  counts: [ReviewStarCount!]!
+}
+
+type ReviewStarCount {
+  stars: Int!
+  count: Int!
+}
+
+type ProductsForm {
+  hostname: String!
+  rows: [ProductsFormRow!]!
+}
+
+type ProductsFormRow {
+  name: String!
+  quantity: Int!
+  price: Float!
+  photos: [String!]!
+  brand: String
+  type: String
+}
+
+"""A connection to a list of items."""
+type SessionReplayConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [SessionReplayEdge]
+  totalCount: Int!
+}
+
+"""An edge in a connection."""
+type SessionReplayEdge {
+  """The item at the end of the edge"""
+  node: SessionReplay
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type SessionReplay implements Node {
+  id: ID!
+  visitorId: String!
+  startedAt: String!
+  endedAt: String
+  initialUrl: String!
+  referrer: String
+  origin: String
+  user: Consumer
+  shoppingCart: AbandonedShoppingCart
+  order: Order
+  eventCount: Int!
+}
+
+type Consumer {
+  id: ID!
+  authId: ID
+  name: String!
+  cellphone: String
+  homePhone: String
+  address: UserStoreAddress
+  cpf: String!
+  email: String
+  createdAt: String!
+  totalSpent: Float!
+  ordersCount: Int!
+  shoppingCarts(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the first n items from the list."""
+    first: Int
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+
+    """Returns the last n items from the list."""
+    last: Int
+    search: String
+    sort: String
+  ): AbandonedShoppingCartConnection!
+  countShoppingCarts: Int!
+  sessions(
+    """Returns the items in the list that come after the specified cursor."""
+    after: String
+
+    """Returns the first n items from the list."""
+    first: Int
+
+    """Returns the items in the list that come before the specified cursor."""
+    before: String
+
+    """Returns the last n items from the list."""
+    last: Int
+  ): SessionReplayConnection!
+  countSessions: Int!
+}
+
+type UserStoreAddress {
+  number: String!
+  street: String!
+  district: String!
+  city: String!
+  state: String!
+  complement: String
+  cep: String!
+}
+
+"""A connection to a list of items."""
+type AbandonedShoppingCartConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AbandonedShoppingCartEdge!]!
+}
+
+"""An edge in a connection."""
+type AbandonedShoppingCartEdge {
+  """The item at the end of the edge"""
+  node: AbandonedShoppingCart
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type AbandonedShoppingCart implements Node {
+  id: ID!
+  coupon: Coupon
+  products: [ShoppingCartProduct!]!
+  totalShipping: TotalShipping!
+  address: UserStoreAddress
+  userInfo: UserInfo
+  originalTotalPrice: Float!
+  totalPrice: Float!
+  errors: [Error!]
+  history: [HistoryEntry!]!
+  isRecovered: Boolean!
+  recoveredAt: String
+  updatedAt: String!
+  accessInfo: AccessInfo
+  isCheckout: Boolean
+  recoveryEmailSentAt: String
+  recoveryLink: String!
+  sessions(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): SessionReplayConnection!
+  countSessions: Int!
+}
+
+type Coupon {
+  """The ID of an object"""
+  id: ID!
+  name: String!
+  value: Float!
+  isActive: Boolean!
+  onlyFirstOrder: Boolean!
+  limitByUser: Boolean!
+  singleUse: Boolean!
+  type: String!
+  products: [CouponProduct!]
+}
+
+type CouponProduct {
+  """The ID of an object"""
+  id: ID!
+  min: Int
+  max: Int
+  title: String!
+}
+
+type ShoppingCartProduct {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+  description: String!
+  images: [Image!]!
+  category: String
+  price: Float
+  finalPrice: Float
+  discountPercentage: Float
+  quantity: Int!
+  availableQuantity: Int!
+  variation: Variation
+  shoppingCartProductOffer: ShoppingCartProductOffer
+  couponDiscount: Float
+  isVirtualProduct: Boolean!
+}
+
+type ShoppingCartProductOffer {
+  """The ID of an object"""
+  origin: ID!
+  offer: Offer!
+
+  """The ID of an object"""
+  id: ID!
+}
+
+type Offer {
+  """The ID of an object"""
+  id: ID!
+  type: String!
+  discount: Float!
+  product: Product
+}
+
+type TotalShipping {
+  type: String!
+  totalValue: Float!
+  totalDeliveryTime: Int!
+  shippingBoxesFilled: [ShippingBoxFilled]
+  accordingToSeller: Boolean!
+  isManual: Boolean!
+  isCalculated: Boolean!
+}
+
+type ShippingBoxFilled {
+  id: ID!
+  products: [ShippingBoxFilledProduct]
+  invoiceKey: String
+}
+
+type ShippingBoxFilledProduct {
+  id: ID
+}
+
+type UserInfo {
+  cellphone: String!
+  email: String!
+  cpf: String!
+  name: String!
+  userId: ID
+  authId: String
+}
+
+type Error {
+  message: String!
+  code: String!
+  createdAt: String!
+}
+
+type HistoryEntry {
+  type: String!
+  message: String!
+  actor: String!
+  actorId: String
+  createdAt: String!
+}
+
+type AccessInfo {
+  ip: String
+  device: String
+  os: String
+  browser: String
+  city: String
+  region: String
+  country: String
+}
+
+type Order {
+  id: ID!
+  orderNumber: Int
+  products(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): OrderProductConnection!
+  paymentStatus: String!
+  deliveryStatus: String!
+  returnStatus: String!
+  paymentAPIStatus: String!
+  createdAt: String!
+  installments: Int!
+  installmentPrice: Float!
+  totalPrice: Float!
+  originalTotalPrice: Float!
+  total: Float!
+  totalShipping: OrderTotalShipping!
+  shippingOptions: [ShippingOption!]
+  isShippingCalculated: Boolean!
+  address: UserStoreAddress
+  user: Consumer
+  operation: Operation
+  userInfo: UserInfo
+  userViewedThankYouPage: Boolean!
+  paymentReceipt: RawFileReference
+  paymentLink: String
+  sessions(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): SessionReplayConnection!
+  countSessions: Int!
+  pendingAdjustment: PendingAdjustment
+  history: [HistoryEntry!]!
+  adjustmentPaymentLink: String
+  coupon: Coupon
+  isTestOrder: Boolean!
+}
+
+"""A connection to a list of items."""
+type OrderProductConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [OrderProductEdge!]!
+}
+
+"""An edge in a connection."""
+type OrderProductEdge {
+  """The item at the end of the edge"""
+  node: OrderProduct!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type OrderProduct {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+  description: String!
+  images: [Image!]!
+  category: String!
+  price: Float
+  cost: Float
+  finalPrice: Float
+  quantity: Int!
+  agreedPrice: Float
+  discountPercentage: Float
+  variation: Variation
+  virtualProduct: VirtualProduct
+  orderProductOffer: OrderProductOffer
+  couponDiscount: Float
+}
+
+type OrderProductOffer {
+  """The ID of an object"""
+  origin: ID!
+  offer: Offer!
+
+  """The ID of an object"""
+  id: ID!
+}
+
+type OrderTotalShipping {
+  type: String!
+  totalValue: Float!
+  totalDeliveryTime: Int!
+  shippingBoxesFilled: [OrderShippingBoxFilled!]!
+  accordingToSeller: Boolean!
+  isManual: Boolean!
+}
+
+type OrderShippingBoxFilled {
+  id: ID!
+  products: [OrderShippingBoxFilledProduct!]!
+  shipping: Shipping!
+  shippingBox: ShippingBox!
+  invoiceKey: String
+}
+
+type OrderShippingBoxFilledProduct {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+  description: String!
+  images: [Image!]!
+  category: String!
+  price: Float
+  cost: Float
+  finalPrice: Float
+  quantity: Int!
+  agreedPrice: Float
+  discountPercentage: Float
+  variation: Variation
+  virtualProduct: VirtualProduct
+}
+
+type Shipping {
+  code: String!
+  value: Float!
+  deliveryTime: Int!
+  melhorEnvio: Boolean
+  melhorEnvioOrderId: String
+}
+
+type ShippingBox {
+  id: ID!
+  alias: String
+  width: String
+  length: String
+  height: String
+  weight: String
+  format: String
+  createdAt: String!
+}
+
+type ShippingOption {
+  code: String!
+  name: String!
+  totalValue: Float!
+  totalDeliveryTime: Int!
+  melhorEnvio: Boolean
+}
+
+type Operation implements Node {
+  id: ID!
+  chargeId: String
+  shipping: Float!
+  shippingCreditCardFee: Float!
+  totalValue: Float!
+  storeValue: Float!
+  createdAt: String!
+  installments: Int
+  installmentPrice: Float
+  status: String!
+  pix: Pix
+  bankSlip: BankSlip
+  orderId: ID!
+}
+
+type Pix {
+  qrCode: String!
+  qrCodeBase64: String
+}
+
+type BankSlip {
+  code: String!
+  pdfUrl: String!
+}
+
+type PendingAdjustment {
+  type: String!
+  amount: Float!
+  originalTotal: Float!
+  newTotal: Float!
+  status: String!
+  createdAt: String!
+  completedAt: String
+}
+
+type Store {
+  """The ID of an object"""
+  id: ID!
+  hostname: String!
+  isActive: Boolean!
+  cnpj: String
+  name: String
+  about: String
+  infos: [StoreInfo]
+  contact: StoreContact
+  image: Image
+  testimonials(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): TestimonialConnection
+  topTestimonials: [Testimonial!]!
+  customization: Customization
+  storeInstallments: [StoreInstallmentType!]
+  taxData: StoreTaxData
+  certificateId: String
+  pixels: [Pixel!]
+  freeShipping: FreeShipping
+  defaultShipping: DefaultShipping
+  productPreparationTime: Int!
+  shippingZones: [ShippingZone!]!
+  shippingAccordingSeller: Boolean!
+  pickupInStoreShipping: PickupInStoreShipping
+  badges: [Image!]
+  landingPage: ComponentType
+  onlyToShippingZones: Boolean!
+  description: String
+  planInfo: PlanInfo
+  pendingPlanInfo: PlanInfo
+  firstTime: Boolean!
+  ad: String
+  registrationEmail: String
+  registrationCellphone: String
+  paymentGatewayActived: Boolean!
+  onlyExternalPayment: Boolean!
+
+  """
+  Controls if the store appears in marketplace search. Only visible if true AND isTestMode is true AND not in trial
+  """
+  showInMarketplace: Boolean!
+
+  """
+  Controls if the store is in live mode (vs test mode). If false, store products will not appear in marketplace
+  """
+  isTestMode: Boolean!
+
+  """
+  If true, the store is free forever and will not be charged or deactivated for non-payment
+  """
+  freeForever: Boolean!
+  showStepByStep: Boolean!
+
+  """
+  Number of days the subscription payment is overdue (null if not overdue)
+  """
+  paymentOverdueDays: Int
+  createdAt: String!
+  lastUnitsRule: LastUnitsRule
+  socialProofRule: SocialProofRule
+
+  """AI credits information for the store"""
+  aiCreditsInfo: AiCreditsInfo
+
+  """Pending AI credits payment (if any)"""
+  pendingAiCreditsPayment: AiCreditsPayment
+  instagramPosts(limit: Int, after: String): [InstagramPost]
+  instagramPostsPagination(limit: Int, after: String): InstagramPostsPagination
+}
+
+type StoreInfo {
+  title: String
+  description: String
+}
+
+type StoreContact {
+  images: [Image]
+  email: String
+  whatsapp: String
+  instagram: String
+  phones: [String]
+  address: StoreAddress
+}
+
+type StoreAddress {
+  number: String
+  cep: String
+  street: String
+  district: String
+  city: String
+  state: String
+  complement: String
+}
+
+"""A connection to a list of items."""
+type TestimonialConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [TestimonialEdge]
+}
+
+"""An edge in a connection."""
+type TestimonialEdge {
+  """The item at the end of the edge"""
+  node: Testimonial
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Testimonial {
+  testimonial: String!
+  id: String!
+  stars: Float!
+  userName: String!
+  createdAt: String!
+}
+
+type Customization {
+  id: ID!
+  palette: Palette
+  searchMetaTags: [String!]
+  theme: String!
+}
+
+type Palette {
+  primary: String!
+  secondary: String!
+  secondaryInvert: String!
+  primaryInvert: String!
+}
+
+type StoreInstallmentType {
+  maximumAmount: Float
+  minimumAmount: Float!
+  value: Int!
+}
+
+type StoreTaxData {
+  companyName: String
+  tradingName: String
+  cnpj: String
+  stateRegistration: String
+  municipalRegistration: String
+  primaryCnae: String
+  taxRegime: String
+  specialTaxRegime: String
+  email: String
+  responsibleName: String
+  responsiblePhone: String
+}
+
+type Pixel {
+  source: String!
+  value: String!
+}
+
+type FreeShipping {
+  minimum: Float!
+  showBar: Boolean!
+}
+
+type DefaultShipping {
+  value: Float!
+  time: Float!
+}
+
+type ShippingZone {
+  name: String!
+  type: String!
+  states: [SpecificState!]!
+  time: Float
+  valuePerWeight: Float
+  percentageValue: Float
+  fixedValue: Float
+  productShipping: Boolean!
+  specificProducts: [Product!]!
+}
+
+type SpecificState {
+  state: String!
+  specificCities: [String!]!
+  excludedCities: [String!]!
+}
+
+type PickupInStoreShipping {
+  time: Float!
+  value: Float!
+}
+
+type ComponentType {
+  """The ID of an object"""
+  id: ID!
+  html: String!
+  css: String!
+  projectData: String!
+  type: String!
+}
+
+type PlanInfo {
+  name: String!
+  entity: String!
+  type: String!
+  value: Float!
+}
+
+type LastUnitsRule {
+  active: Boolean!
+  maximumUnits: Int!
+  specificProducts: [Product!]!
+  variant: String!
+}
+
+type SocialProofRule {
+  active: Boolean!
+  showViews: Boolean!
+  showAddToCart: Boolean!
+  showOrders: Boolean!
+  variant: String!
+}
+
+"""AI credits information for a store"""
+type AiCreditsInfo {
+  """Total monthly credits included in the plan"""
+  monthlyCredits: Int!
+
+  """Monthly credits used this period"""
+  monthlyCreditsUsed: Int!
+
+  """Extra purchased credits (never expire)"""
+  purchasedCredits: Int!
+
+  """Date when monthly credits will reset (ISO string)"""
+  monthlyResetDate: String!
+
+  """Total available credits (monthly remaining + purchased)"""
+  totalAvailable: Int!
+
+  """Monthly credits remaining"""
+  monthlyRemaining: Int!
+}
+
+"""AI Credits payment information"""
+type AiCreditsPayment {
+  """Payment ID"""
+  id: String!
+
+  """Payment status (pending, paid, failed, etc.)"""
+  status: String!
+
+  """Payment amount in cents"""
+  amount: Int!
+
+  """Amount of credits purchased"""
+  creditsAmount: Int!
+
+  """Payment method type"""
+  paymentMethod: String!
+
+  """Payment creation date (ISO string)"""
+  createdAt: String!
+
+  """Payment date (ISO string, null if not paid yet)"""
+  paidAt: String
+
+  """PIX payment information (if applicable)"""
+  pix: AiCreditsPaymentPix
+
+  """Bank slip payment information (if applicable)"""
+  bankSlip: AiCreditsPaymentBankSlip
+}
+
+type AiCreditsPaymentPix {
+  qrCode: String!
+  qrCodeBase64: String
+}
+
+type AiCreditsPaymentBankSlip {
+  code: String!
+  pdfUrl: String!
+}
+
+type InstagramPost {
+  id: String!
+  mediaType: String!
+  mediaUrl: String!
+  thumbnailUrl: String
+  permalink: String!
+  caption: String
+  timestamp: String!
+}
+
+type InstagramPostsPagination {
+  posts: [InstagramPost]
+  nextCursor: String
+}
+
+type Domain {
+  """The ID of an object"""
+  id: ID!
+  url: String!
+  zoneId: String
+  nameServers: [String!]!
+  pendingUrl: String
+  pendingZoneId: String
+  pendingNameServers: [String!]!
+}
+
+type Section {
+  hostname: String!
+  sectionTrees: [SectionTreeNode]
+  variant: String
+}
+
+"""A node in the section tree hierarchy"""
+type SectionTreeNode {
+  """The name of the section"""
+  name: String!
+
+  """Optional image for the section"""
+  image: Image
+
+  """Child nodes of this section"""
+  children: [SectionTreeNode]
+}
+
+type Category {
+  """The ID of an object"""
+  id: ID!
+  hostname: String!
+  name: String!
+  show: Boolean!
+}
+
+type AdBar {
+  messages: [String!]
+}
+
+type ProductConnection {
+  edges: [ProductEdge!]!
+  pageInfo: PageInfo!
+  total: Int
+}
+
+"""An edge in a connection."""
+type ProductEdge {
+  """The item at the end of the edge"""
+  node: Product!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Metrics {
+  views: Int
+  uniqueViews(startDate: String, endDate: String): Int
+  viewsByDay: [CountByDay]
+  groupMetricsByField(filter: String, field: String, skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): GroupByFieldConnection!
+  countTotalGroupMetricsByField(filter: String, field: String): Int!
+}
+
+type CountByDay {
+  date: String
+  count: Int
+}
+
+"""A connection to a list of items."""
+type GroupByFieldConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [GroupByFieldEdge!]!
+}
+
+"""An edge in a connection."""
+type GroupByFieldEdge {
+  """The item at the end of the edge"""
+  node: GroupByField!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type GroupByField {
+  value: String
+  count: Int
+}
+
+"""A connection to a list of items."""
+type BatchRecordConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [BatchRecordEdge!]!
+}
+
+"""An edge in a connection."""
+type BatchRecordEdge {
+  """The item at the end of the edge"""
+  node: BatchRecord!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type BatchRecord implements Node {
+  id: ID!
+  images: [Image]
+  shippingInfo: ShippingInfo
+  skuCode: String!
+  cEan: String
+  cEanTrib: String
+}
+
+type Sku {
+  id: ID!
+  description: String!
+}
+
+"""A connection to a list of items."""
+type ConsumerConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ConsumerEdge!]!
+}
+
+"""An edge in a connection."""
+type ConsumerEdge {
+  """The item at the end of the edge"""
+  node: Consumer!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+"""A connection to a list of items."""
+type EmployeeConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [EmployeeEdge!]!
+}
+
+"""An edge in a connection."""
+type EmployeeEdge {
+  """The item at the end of the edge"""
+  node: Employee!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Employee {
+  id: ID!
+  authId: ID
+  name: String!
+  cellphone: String
+  homePhone: String
+  address: UserStoreAddress
+  cpf: String!
+  email: String
+}
+
+"""A connection to a list of items."""
+type OrderConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [OrderEdge!]!
+}
+
+"""An edge in a connection."""
+type OrderEdge {
+  """The item at the end of the edge"""
+  node: Order!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Office {
+  """The ID of an object"""
+  id: ID!
+  bank: Bank!
+  reviews(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, sort: String): ReviewConnection!
+  countReviews(search: String): Int!
+  operations(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, orderId: ID): OperationConnection!
+  countOperations(search: String, orderId: ID): Int!
+  stockMovings(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, type: [String], manual: String): StockConnection!
+  inboundInvoices(skip: Int, count: Int): [InboundInvoice!]!
+  countInboundInvoices: Int!
+  purchaseOrders(skip: Int, count: Int, status: String): [PurchaseOrder!]!
+  countPurchaseOrders(status: String): Int!
+  countStockMovings(search: String, type: [String], manual: String): Int!
+  paymentGateway: PaymentGateway
+  coupons: [Coupon!]
+  bankAccount: BankAccount
+  remainingPayment: OfficePayment
+  payments: [OfficePayment!]!
+  aiCreditsPayments: [AiCreditsPayment!]!
+  creditCards: [CreditCard!]!
+  officeStoreStatus: OfficeStoreStatus!
+  resources(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, origin: String!): ResourceConnection!
+  usage: Usage!
+  postCalendar(month: Int!, year: Int!): PostCalendar!
+  coupon: OfficeCoupon
+  entity: String
+  integrations: [Integration!]
+  abandonedShoppingCarts(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, sort: String): AbandonedShoppingCartConnection!
+  activeShoppingCarts(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID, search: String, sort: String): AbandonedShoppingCartConnection!
+  countAbandonedShoppingCarts(search: String, startDate: String, endDate: String): Int!
+  countActiveShoppingCarts(search: String): Int!
+  totalOrdersValue(startDate: String, endDate: String): Float!
+  variationAttributes: [VariationAttributes!]
+  pagesConfiguration: [Page!]!
+  referralInfo: ReferralInfo!
+}
+
+type Bank {
+  """The ID of an object"""
+  id: ID!
+  percentage: Float!
+  fixedFee: Float!
+  maximumValueForFixedFee: Float!
+}
+
+"""A connection to a list of items."""
+type OperationConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [OperationEdge!]!
+}
+
+"""An edge in a connection."""
+type OperationEdge {
+  """The item at the end of the edge"""
+  node: Operation!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+"""A connection to a list of items."""
+type StockConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [StockEdge!]!
+}
+
+"""An edge in a connection."""
+type StockEdge {
+  """The item at the end of the edge"""
+  node: Stock!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Stock {
+  id: ID!
+  quantity: Int!
+  productId: ID!
+  title: String!
+  type: String!
+  createdAt: String!
+  price: Float!
+  finalPrice: Float!
+  skuCode: String
+  cEanTrib: String
+  cEan: String
+  discountPercentage: Float
+  manual: Boolean!
+  variation: Variation
+}
+
+type InboundInvoice {
+  id: ID!
+  hostname: String!
+  supplierCnpj: String
+  supplierName: String
+  issueDate: String
+  accessKey: String
+  totalAmount: Float
+  createdAt: String
+  pdfUrl: String
+  observations: String
+  status: String
+  notaFacilId: String
+  emissionError: String
+  emittedAt: String
+  items: [InboundInvoiceItem!]
+  downloadUrl(hostname: String!): String
+}
+
+type InboundInvoiceItem {
+  id: ID!
+  title: String!
+  skuCode: String
+  cEan: String
+  ncm: String
+  originCst: String
+  cfop: String
+  unit: String
+  quantity: Float!
+  unitPrice: Float!
+  totalPrice: Float!
+  icmsBase: Float
+  icmsValue: Float
+  ipiValue: Float
+  icmsRate: Float
+  ipiRate: Float
+  importError: String
+}
+
+type PurchaseOrder {
+  id: ID!
+  hostname: String!
+  orderNumber: String
+  supplierCnpj: String
+  supplierName: String
+  orderDate: String
+  expectedDeliveryDate: String
+  subtotal: Float
+  discountPercentage: Float
+  discountAmount: Float
+  totalAmount: Float
+  createdAt: String
+  observations: String
+  linkedInvoiceId: ID
+  items: [PurchaseOrderItem!]
+  downloadUrl(hostname: String!): String
+}
+
+type PurchaseOrderItem {
+  id: ID!
+  title: String!
+  skuCode: String
+  cEan: String
+  ncm: String
+  cfop: String
+  unit: String
+  quantity: Float!
+  unitPrice: Float!
+  totalPrice: Float!
+  receivedQuantity: Float
+}
+
+type PaymentGateway {
+  id: ID!
+  type: String!
+  configurations: [Configuration!]!
+}
+
+union Configuration = MercadoPagoConfiguration | ManualPixConfiguration
+
+type MercadoPagoConfiguration {
+  allowPix: Boolean
+  allowCreditCard: Boolean
+  allowBankSlip: Boolean
+  accessToken: String!
+  publicKey: String!
+  type: String!
+  installmentsTaxes: [InstallmentTax!]!
+}
+
+type InstallmentTax {
+  installment: Int!
+  tax: Float!
+}
+
+type ManualPixConfiguration {
+  type: String!
+  key: String!
+  name: String!
+  city: String!
+}
+
+type BankAccount {
+  """The ID of an object"""
+  id: ID!
+  accountNumber: String!
+  agency: String!
+  bankName: String!
+  accountType: String!
+}
+
+type OfficePayment {
+  """The ID of an object"""
+  id: ID!
+  amount: Float!
+  pix: Pix
+  bankSlip: BankSlip
+  status: String!
+  paymentDate: String
+  dueDate: String
+  discount: Float
+  planInfo: PlanIdentifier
+  changePlanDiscount: Float
+  type: String!
+  billingCycle: String
+  offerId: String
+  offerTitle: String
+  creditsAmount: Float
+  createdAt: String
+  paymentLinkHash: String
+  generatedByAdmin: Boolean
+  externalServices: [ExternalService]
+  itemizedCharges: [OfficePaymentItem]
+}
+
+type PlanIdentifier {
+  name: String!
+  entity: String!
+  type: String!
+}
+
+type ExternalService {
+  description: String!
+  amount: Float!
+}
+
+type OfficePaymentItem {
+  type: String!
+  description: String!
+  amount: Float!
+}
+
+type CreditCard {
+  """The ID of an object"""
+  id: ID!
+  brand: String!
+  lastDigits: String!
+  paymentApiCardId: String!
+}
+
+type OfficeStoreStatus {
+  firstSell: Boolean!
+  addressRegistered: Boolean!
+  paymentGatewayActived: Boolean!
+  productReadyToSell: Boolean!
+}
+
+"""A connection to a list of items."""
+type ResourceConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [ResourceEdge!]!
+}
+
+"""An edge in a connection."""
+type ResourceEdge {
+  """The item at the end of the edge"""
+  node: Resource!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Resource {
+  url: String!
+  filename: String!
+}
+
+type Usage {
+  onSale: UsageLimit!
+  funnel: UsageLimit!
+  coupon: UsageLimit!
+  product: UsageLimit!
+  imagesPerProduct: UsageLimit!
+  discountModal: UsageLimit!
+  cashDiscount: UsageLimit!
+  timer: UsageLimit!
+  indicator: UsageLimit!
+}
+
+type UsageLimit {
+  used: Int!
+  limit: Int!
+}
+
+type PostCalendar {
+  """The ID of an object"""
+  id: ID!
+  month: Int!
+  year: Int!
+  postDays: [PostCalendarDay!]!
+  hasPrevious: Boolean!
+  hasNext: Boolean!
+}
+
+type PostCalendarDay {
+  description: String!
+  day: Int!
+}
+
+type OfficeCoupon {
+  name: String!
+  isActive: Boolean!
+  plans: [PlanIdentifier!]!
+  discounts: [OfficeCouponDiscount!]!
+}
+
+type OfficeCouponDiscount {
+  monthsApplied: Int!
+  months: Int!
+  value: Float!
+  type: String!
+}
+
+type Integration {
+  id: String
+  name: String
+  isActive: Boolean
+  username: String
+}
+
+type VariationAttributes {
+  name: String!
+  values: [String!]!
+}
+
+type Page {
+  id: ID!
+  hostname: String!
+  type: String!
+  pageElements: [PageElement!]!
+}
+
+type PageElement {
+  element: Element!
+  children: [PageElement!]!
+  props: String!
+}
+
+type Element {
+  id: ID!
+  type: String!
+  props: JSON!
+  subElements: [Element!]!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""Referral information for a store owner"""
+type ReferralInfo {
+  """Unique referral code for the store"""
+  referralCode: String!
+
+  """Full referral link to share"""
+  referralLink: String!
+
+  """Total number of invites (stores that signed up with your code)"""
+  totalReferrals: Int!
+
+  """Total number of stores invited (signed up with your code)"""
+  totalInvites: Int!
+
+  """Total number of stores that made their first payment"""
+  totalPaidReferrals: Int!
+
+  """Points waiting to be released (after 30 days)"""
+  pendingPoints: Int!
+
+  """Points available for redemption"""
+  availablePoints: Int!
+}
+
+type UserByEmail {
+  exists: Boolean!
+}
+
+type Menu {
+  text: String!
+  submenus: [MenuItem!]!
+}
+
+type MenuItem {
+  text: String!
+  submenus: [MenuItem!]!
+}
+
+type ClientPaymentGateway {
+  id: ID!
+  type: String!
+  allowPix: Boolean
+  allowCreditCard: Boolean
+  allowBankSlip: Boolean
+  publicKey: String
+  accountId: String
+}
+
+type Funnel {
+  """The ID of an object"""
+  id: ID!
+  offers: [Offer!]!
+}
+
+type AutocompleteProductsResponse {
+  suggestions: [AutocompleteProductResult!]!
+  total: Int!
+}
+
+type AutocompleteProductResult {
+  id: String!
+  title: String!
+  productId: String!
+}
+
+type PublicPaymentGateway {
+  publicKey: String!
+}
+
+"""Indicator data"""
+type Indicator {
+  """The ID of an object"""
+  id: ID!
+  text: String!
+  variant: String!
+  specificProducts: [Product!]!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Timer {
+  """The ID of an object"""
+  id: ID!
+  hostname: String!
+  endDate: String!
+  componentsAffected: [ComponentAffected!]!
+  variant: String!
+  isExpired: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type ComponentAffected {
+  type: String!
+  id: String!
+  onSaleProduct: Product
+}
+
+type DiscountModal {
+  """The ID of an object"""
+  id: ID!
+  variant: String!
+  fields: [String!]!
+  offerValue: String!
+  delivery: [String!]!
+  trigger: String!
+  pages: [String!]!
+  title: String!
+  subtitle: String!
+  coupon: Coupon!
+}
+
+type SocialProofEvent {
+  """The ID of an object"""
+  id: ID!
+  productTitle: String!
+  productId: ID!
+  eventType: String!
+  userEventInfo: UserEventInfo!
+}
+
+type UserEventInfo {
+  firstName: String
+  city: String
+  eventDate: String
+}
+
+type NotificationQuery {
+  """The ID of an object"""
+  id: ID!
+  notifications(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): NotificationConnection!
+  total: Int!
+  unreadCount: Int!
+}
+
+"""A connection to a list of items."""
+type NotificationConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [NotificationEdge]
+}
+
+"""An edge in a connection."""
+type NotificationEdge {
+  """The item at the end of the edge"""
+  node: Notification
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type Notification {
+  """The ID of an object"""
+  id: ID!
+  title: String!
+  message: String!
+  type: String!
+  isRead: Boolean!
+  metadata: String
+  createdAt: String!
+  readAt: String
+}
+
+type PrivacyPolicy {
+  content: String!
+  date: String!
+}
+
+type TermsOfUse {
+  content: String!
+  date: String!
+}
+
+"""A connection to a list of items."""
+type StoreLeadConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [StoreLeadEdge!]!
+}
+
+"""An edge in a connection."""
+type StoreLeadEdge {
+  """The item at the end of the edge"""
+  node: StoreLead!
+
+  """A cursor for use in pagination"""
+  cursor: String!
+}
+
+type StoreLead {
+  """The ID of an object"""
+  id: ID!
+  name: String
+  email: String
+  cellphone: String
+  type: String!
+  content: String
+  createdAt: String!
+}
+
+type ShoppingCart {
+  id: ID!
+  orderIdReference: ID
+  shoppingCartIdReference: String
+  isAdjustmentOrder: Boolean!
+  coupon: Coupon
+  products: [ShoppingCartProduct!]!
+  totalShipping: TotalShipping!
+  shippingOptions: [ShoppingCartClientShippingOption!]
+  maximumInstallments: Int!
+  installmentsPrice: [InstallmentsPrice!]!
+  address: UserStoreAddress
+  isAddressComplete: Boolean!
+  userInfo: UserInfo
+  isUserInfoComplete: Boolean!
+  isShippingCalculated: Boolean!
+  originalTotalPrice: Float!
+  totalPrice: Float!
+  errors: [Error!]
+  history: [HistoryEntry!]!
+  totalPriceByPaymentMethod: [ShoppingCartTotalByPaymentMethod!]!
+}
+
+type ShoppingCartClientShippingOption {
+  code: String!
+  name: String!
+  totalValue: Float!
+  totalDeliveryTime: Int!
+  melhorEnvio: Boolean
+}
+
+type ShoppingCartTotalByPaymentMethod {
+  paymentMethod: String!
+  totalPrice: Float!
+  totalShipping: Float!
+}
+
+type Mutation {
+  clientGoogleLogin(input: ClientGoogleLoginMutationInput!): ClientGoogleLoginMutationPayload
+  clientGoogleSignup(input: ClientGoogleSignupMutationInput!): ClientGoogleSignupMutationPayload
+  clientLogin(input: ClientLoginMutationInput!): ClientLoginMutationPayload
+  clientSignup(input: ClientSignupMutationInput!): ClientSignupMutationPayload
+  refreshSession(input: RefreshSessionMutationInput!): RefreshSessionMutationPayload
+  saveDiscountModalUserData(input: SaveDiscountModalUserDataMutationInput!): SaveDiscountModalUserDataMutationPayload
+  ebookLead(input: EbookLeadMutationInput!): EbookLeadMutationPayload
+  lead(input: LeadMutationInput!): LeadMutationPayload
+  track(input: TrackMutationInput!): TrackMutationPayload
+  addNewCheckoutOrder(input: AddNewCheckoutOrderMutationInput!): AddNewCheckoutOrderMutationPayload
+  completeOrderCharge(input: CompleteOrderChargeMutationInput!): CompleteOrderChargeMutationPayload
+  viewOrderThankYouPage(input: ViewOrderThankYouPageMutationInput!): ViewOrderThankYouPageMutationPayload
+  addCreditCard(input: AddCreditCardMutationInput!): AddCreditCardMutationPayload
+  deleteCreditCard(input: DeleteCreditCardMutationInput!): DeleteCreditCardMutationPayload
+  createReviewAnswer(input: CreateReviewAnswerMutationInput!): CreateReviewAnswerMutationPayload
+  createReview(input: CreateReviewMutationInput!): CreateReviewMutationPayload
+  addShoppingCartItem(input: AddShoppingCartItemMutationInput!): AddShoppingCartItemMutationPayload
+  calculateShoppingCartTotalShipping(input: CalculateShoppingCartTotalShippingMutationInput!): CalculateShoppingCartTotalShippingMutationPayload
+  checkCouponOnShoppingCart(input: CheckCouponOnShoppingCartMutationInput!): CheckCouponOnShoppingCartMutationPayload
+  recoverOrderAdjustmentToShoppingCart(input: RecoverOrderAdjustmentToShoppingCartMutationInput!): RecoverOrderAdjustmentToShoppingCartMutationPayload
+  recoverOrderToShoppingCart(input: RecoverOrderToShoppingCartMutationInput!): RecoverOrderToShoppingCartMutationPayload
+  recoverShoppingCart(input: RecoverShoppingCartMutationInput!): RecoverShoppingCartMutationPayload
+  removeShoppingCartItem(input: RemoveShoppingCartItemMutationInput!): RemoveShoppingCartItemMutationPayload
+  storeShoppingCartInfo(input: StoreShoppingCartInfoMutationInput!): StoreShoppingCartInfoMutationPayload
+  updateCouponOnShoppingCart(input: UpdateCouponOnShoppingCartMutationInput!): UpdateCouponOnShoppingCartMutationPayload
+  updateShoppingCartAddress(input: UpdateShoppingCartAddressMutationInput!): UpdateShoppingCartAddressMutationPayload
+  updateShoppingCartTotalShippingType(input: UpdateShoppingCartTotalShippingTypeMutationInput!): UpdateShoppingCartTotalShippingTypeMutationPayload
+  addTestimonial(input: AddTestimonialMutationInput!): AddTestimonialMutationPayload
+  confirmUser(input: ConfirmUserMutationInput!): ConfirmUserMutationPayload
+  updateUserAddress(input: UpdateUserAddressMutationInput!): UpdateUserAddressMutationPayload
+  updateUser(input: UpdateUserMutationInput!): UpdateUserMutationPayload
+}
+
+type ClientGoogleLoginMutationPayload {
+  auth: Boolean!
+  hostname: String!
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain auth.
+  """
+  jwtToken: String
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain token refresh.
+  """
+  refreshToken: String
+}
+
+input ClientGoogleLoginMutationInput {
+  jwtToken: String!
+  hostname: String!
+}
+
+type ClientGoogleSignupMutationPayload {
+  auth: Boolean!
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain auth.
+  """
+  jwtToken: String
+}
+
+input ClientGoogleSignupMutationInput {
+  email: String!
+  cellphone: String!
+  googleId: String!
+  hostname: [String]!
+  name: String!
+  cpf: String!
+  address: UserAddressInput
+}
+
+input UserAddressInput {
+  number: String!
+  street: String!
+  district: String!
+  city: String!
+  state: String!
+  complement: String
+  cep: String!
+}
+
+type ClientLoginMutationPayload {
+  auth: Boolean!
+  hostname: String!
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain auth.
+  """
+  jwtToken: String
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain token refresh.
+  """
+  refreshToken: String
+}
+
+input ClientLoginMutationInput {
+  email: String!
+  password: String!
+  hostname: String!
+}
+
+type ClientSignupMutationPayload {
+  auth: Boolean!
+
+  """
+  Only returned when X-Auth-Mode: bearer header is set. Use for cross-domain auth.
+  """
+  jwtToken: String
+}
+
+input ClientSignupMutationInput {
+  email: String!
+  cellphone: String!
+  password: String!
+  hostname: [String]!
+  name: String!
+  cpf: String!
+  address: UserAddressInput
+}
+
+type RefreshSessionMutationPayload {
+  success: Boolean!
+
+  """Only returned when X-Auth-Mode: bearer header is set."""
+  jwtToken: String
+
+  """Only returned when X-Auth-Mode: bearer header is set."""
+  refreshToken: String
+}
+
+input RefreshSessionMutationInput {
+  """
+  Pass explicitly for bearer mode (cross-domain). Omit to use cookie-based refresh.
+  """
+  refreshToken: String
+}
+
+type SaveDiscountModalUserDataMutationPayload {
+  client: Client!
+  couponName: String
+}
+
+input SaveDiscountModalUserDataMutationInput {
+  hostname: String!
+  name: String
+  email: String
+  cellphone: String
+  discountModalId: ID!
+}
+
+type EbookLeadMutationPayload {
+  success: Boolean
+}
+
+input EbookLeadMutationInput {
+  name: String!
+  email: String!
+  cellphone: String!
+}
+
+type LeadMutationPayload {
+  success: Boolean
+}
+
+input LeadMutationInput {
+  name: String!
+  email: String!
+  cellphone: String!
+  otherInfo: String
+  type: String!
+}
+
+type TrackMutationPayload {
+  success: Boolean
+}
+
+input TrackMutationInput {
+  ip: String
+  hostname: String
+  cep: String
+  userAgent: String
+  anonymousId: String!
+  eventId: String!
+  eventSourceUrl: String
+  fbc: String
+  fbp: String
+  eventName: String
+  value: Float
+  email: String
+  phone: String
+  search: String
+  gClientId: String
+}
+
+type AddNewCheckoutOrderMutationPayload {
+  orderInserted: Order
+  pixCreated: Pix
+  bankSlipCreated: BankSlip
+  shoppingCart: ShoppingCart!
+  error: Error
+}
+
+input AddNewCheckoutOrderMutationInput {
+  deviceId: String
+  hostname: String!
+  user: AddNewCheckoutOrderUserInputType!
+  payment: AddNewCheckoutOrderPaymentInputType!
+  address: AddNewCheckoutOrderAddressInputType!
+}
+
+input AddNewCheckoutOrderUserInputType {
+  name: String!
+  cellphone: String!
+  cpf: String!
+  email: String!
+}
+
+input AddNewCheckoutOrderPaymentInputType {
+  installments: Int
+  paymentApiCardId: String
+  paymentType: String
+  deviceId: String
+  brand: String
+  cardHash: String
+}
+
+input AddNewCheckoutOrderAddressInputType {
+  number: String!
+  street: String!
+  district: String!
+  city: String!
+  state: String!
+  complement: String
+  cep: String!
+}
+
+type CompleteOrderChargeMutationPayload {
+  success: Boolean!
+  orderUpdated: Order
+}
+
+input CompleteOrderChargeMutationInput {
+  hostname: String!
+  orderId: ID!
+}
+
+type ViewOrderThankYouPageMutationPayload {
+  orderUpdated: Order
+  success: Boolean
+}
+
+input ViewOrderThankYouPageMutationInput {
+  hostname: String!
+  orderId: ID!
+}
+
+type AddCreditCardMutationPayload {
+  success: Boolean!
+}
+
+input AddCreditCardMutationInput {
+  hostname: String!
+  cardHash: String!
+}
+
+type DeleteCreditCardMutationPayload {
+  user: User!
+}
+
+type User {
+  id: ID!
+  name: String!
+  cpf: String!
+  email: String!
+  cellphone: String
+  homePhone: String
+  hostname: String!
+  address: UserStoreAddress
+  creditCards: [CreditCard!]!
+  orders(skip: Int, after: String, before: String, first: Int, count: Int, last: Int, cursor: ID): OrderConnection!
+  countOrders: Int!
+}
+
+input DeleteCreditCardMutationInput {
+  hostname: String!
+  paymentApiCardId: String!
+}
+
+type CreateReviewAnswerMutationPayload {
+  success: Boolean!
+}
+
+input CreateReviewAnswerMutationInput {
+  hostname: String!
+  reviewId: ID!
+  answer: String!
+}
+
+type CreateReviewMutationPayload {
+  success: Boolean!
+}
+
+input CreateReviewMutationInput {
+  hostname: String!
+  name: String!
+  phone: String!
+  productId: String!
+  stars: Int!
+  comment: String
+  images: [ReviewMediaInput!]
+  videos: [ReviewMediaInput!]
+}
+
+input ReviewMediaInput {
+  url: String!
+  filename: String!
+}
+
+type AddShoppingCartItemMutationPayload {
+  shoppingCart: ShoppingCart!
+}
+
+input AddShoppingCartItemMutationInput {
+  hostname: String!
+  productId: String!
+  quantity: Int!
+  shoppingCartProductOffer: ShoppingCartProductOfferInputType
+  detectedCity: String
+}
+
+input ShoppingCartProductOfferInputType {
+  origin: ID!
+  id: ID!
+  offer: OfferInputType!
+}
+
+input OfferInputType {
+  hostname: String!
+  discount: Float!
+  type: String!
+  productId: ID!
+}
+
+type CalculateShoppingCartTotalShippingMutationPayload {
+  shoppingCart: ShoppingCart!
+  error: Error
+}
+
+input CalculateShoppingCartTotalShippingMutationInput {
+  hostname: String!
+  forceRecalculation: Boolean
+}
+
+type CheckCouponOnShoppingCartMutationPayload {
+  shoppingCart: ShoppingCart!
+  couponRemoved: Boolean!
+}
+
+input CheckCouponOnShoppingCartMutationInput {
+  hostname: String!
+  cpf: String
+}
+
+type RecoverOrderAdjustmentToShoppingCartMutationPayload {
+  success: Boolean!
+}
+
+input RecoverOrderAdjustmentToShoppingCartMutationInput {
+  hostname: String!
+  token: String!
+}
+
+type RecoverOrderToShoppingCartMutationPayload {
+  success: Boolean!
+}
+
+input RecoverOrderToShoppingCartMutationInput {
+  hostname: String!
+  token: String!
+}
+
+type RecoverShoppingCartMutationPayload {
+  success: Boolean!
+}
+
+input RecoverShoppingCartMutationInput {
+  hostname: String!
+  token: String!
+}
+
+type RemoveShoppingCartItemMutationPayload {
+  success: Boolean
+  shoppingCart: ShoppingCart!
+}
+
+input RemoveShoppingCartItemMutationInput {
+  hostname: String!
+  productId: String!
+}
+
+type StoreShoppingCartInfoMutationPayload {
+  success: Boolean!
+}
+
+input StoreShoppingCartInfoMutationInput {
+  hostname: String!
+  isCheckout: Boolean
+  userInfo: StoreShoppingCartInfoUserInfo
+  address: StoreShoppingCartInfoAddress
+  accessInfo: StoreShoppingCartInfoAccessInfo
+}
+
+input StoreShoppingCartInfoUserInfo {
+  email: String!
+  name: String!
+  cellphone: String!
+  cpf: String!
+}
+
+input StoreShoppingCartInfoAddress {
+  cep: String!
+  street: String!
+  number: String!
+  complement: String
+  district: String!
+  city: String!
+  state: String!
+}
+
+input StoreShoppingCartInfoAccessInfo {
+  ip: String!
+  device: String!
+  os: String!
+  browser: String!
+  city: String!
+  region: String!
+  country: String!
+  latitude: Float!
+  longitude: Float!
+  userAgent: String!
+}
+
+type UpdateCouponOnShoppingCartMutationPayload {
+  shoppingCart: ShoppingCart!
+}
+
+input UpdateCouponOnShoppingCartMutationInput {
+  hostname: String!
+  couponCode: String
+}
+
+type UpdateShoppingCartAddressMutationPayload {
+  shoppingCart: ShoppingCart!
+}
+
+input UpdateShoppingCartAddressMutationInput {
+  hostname: String!
+  address: UpdateShoppingCartTotalShippingAddress!
+}
+
+input UpdateShoppingCartTotalShippingAddress {
+  number: String!
+  street: String!
+  district: String!
+  city: String!
+  state: String!
+  complement: String
+  cep: String!
+}
+
+type UpdateShoppingCartTotalShippingTypeMutationPayload {
+  shoppingCart: ShoppingCart!
+  error: Error
+}
+
+input UpdateShoppingCartTotalShippingTypeMutationInput {
+  hostname: String!
+  type: String!
+  code: String
+}
+
+type AddTestimonialMutationPayload {
+  success: Boolean
+}
+
+input AddTestimonialMutationInput {
+  hostname: String!
+  testimonial: String
+  stars: Float
+}
+
+type ConfirmUserMutationPayload {
+  auth: Boolean!
+}
+
+input ConfirmUserMutationInput {
+  cpf: String!
+  hostname: String!
+  confirmationToken: String!
+  password: String!
+}
+
+type UpdateUserAddressMutationPayload {
+  user: User!
+}
+
+input UpdateUserAddressMutationInput {
+  address: UserAddressInput
+  hostname: String!
+}
+
+type UpdateUserMutationPayload {
+  user: User!
+}
+
+input UpdateUserMutationInput {
+  name: String
+  homePhone: String
+  cellphone: String
+  hostname: String!
+}
