@@ -24,22 +24,23 @@ export const createStoreModule = (client: GraphQLClient, hostname: string) => {
     return data.client.store;
   };
 
-  const getSections = async (): Promise<Array<{ id: string; title: string }>> => {
+  const getCollections = async (): Promise<Array<{ id: string; name: string; show: boolean }>> => {
     const data = await client.execute<{
-      client: { sections: Array<{ id: string; title: string }> };
+      client: { collections: Array<{ id: string; name: string; show: boolean }> };
     }>(
-      `query GetSections($hostname: String!) {
+      `query GetCollections($hostname: String!) {
         client(hostname: $hostname) {
-          sections {
+          collections {
             id
-            title
+            name
+            show
           }
         }
       }`,
       { hostname }
     );
 
-    return data.client.sections;
+    return data.client.collections;
   };
 
   const getMenus = async (): Promise<Array<{ id: string; title: string }>> => {
@@ -60,5 +61,5 @@ export const createStoreModule = (client: GraphQLClient, hostname: string) => {
     return data.client.menus;
   };
 
-  return { get, getSections, getMenus };
+  return { get, getCollections, getMenus };
 };
