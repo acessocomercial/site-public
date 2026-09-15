@@ -96,6 +96,11 @@ export interface Store {
   name?: string;
   image?: Image;
   about?: string;
+  onlyExternalPayment?: boolean;
+  isPasswordProtected?: boolean;
+  contact?: {
+    whatsapp?: string | null;
+  } | null;
 }
 
 export interface AddToCartInput {

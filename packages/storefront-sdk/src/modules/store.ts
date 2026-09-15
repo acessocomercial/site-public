@@ -15,6 +15,11 @@ export const createStoreModule = (client: GraphQLClient, hostname: string) => {
             name
             image { url }
             about
+            onlyExternalPayment
+            isPasswordProtected
+            contact {
+              whatsapp
+            }
           }
         }
       }`,
